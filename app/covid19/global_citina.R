@@ -50,9 +50,14 @@ for (i in (start+1):(Sys.Date()-1)) {
 
 df_clean <- df %>% 
   mutate(Last_Update = as.Date(Last_Update)) %>% 
-  filter(ISO3 == 'USA')
+  filter(ISO3 == 'USA') %>% 
+  filter(FIPS < 100)
+  
 save(df_clean, file="output/data_up_to_date.RData")
 
+rm(df)
+rm(temp)
+# there are 50 states and District of Columbia
 
 # if the data source is not available, will use the data stored (up to 10-08-2020)
 # name: "data_use.Rdata"
