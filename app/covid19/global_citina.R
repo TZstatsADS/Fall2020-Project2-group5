@@ -2,7 +2,8 @@
 # packages used
 packages.used <- 
   as.list(c("tidyverse", "haven", "plotly", "shiny", "ggplot2", "shinythemes", "tmap", "sf", 
-            "rgdal", "RColorBrewer","tibble", "viridis", "RCurl", "leaflet", "zoo", "lubridate"))
+            "rgdal", "RColorBrewer","tibble", "viridis", "RCurl", "leaflet", "zoo", "lubridate",
+            "RColorBrewer"))
 
 # require and install packages
 check.pkg <- function(x){
@@ -11,6 +12,25 @@ check.pkg <- function(x){
 }
 
 lapply(packages.used, check.pkg)
+
+library(viridis)
+library(dplyr)
+library(tibble)
+library(tidyverse)
+library(shinythemes)
+library(sf)
+library(RCurl)
+library(tmap)
+library(rgdal)
+library(leaflet)
+library(shiny)
+library(shinythemes)
+library(plotly)
+library(ggplot2)
+library(lubridate)
+library(zoo)
+library(shinydashboard)
+library(RColorBrewer)
 
 # read up to date data from JHU
 urlpart1 <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/"
@@ -51,9 +71,14 @@ for (i in (start+1):(Sys.Date()-1)) {
 df_clean <- df %>% 
   mutate(Last_Update = as.Date(Last_Update)) %>% 
   filter(ISO3 == 'USA') %>% 
-  filter(FIPS < 100)
-  
-save(df_clean, file="output/data_up_to_date.RData")
+  filter(FIPS < 100) %>% 
+  droplevels() %>% 
+  mutate(Recovered=ifelse(is.na(Recovered), 0, Recovered))
+
+tmpc <- which(df_clean$Active<0)
+df_clean$Active[tmpc] <- round(mean(c(df_clean$Active[tmpc-1], df_clean$Active[tmpc+1])),0)
+
+save(df_clean, file="./output/data_up_to_date.RData")
 
 rm(df)
 rm(temp)
@@ -61,6 +86,39 @@ rm(temp)
 
 # if the data source is not available, will use the data stored (up to 10-08-2020)
 # name: "data_use.Rdata"
+
+cbPalette <- c("#56B4E9", "#D55E00", "#009E73", "#F0E442", "#E69F00", "#0072B2", "#CC79A7", "#F0E449")
+s <- state.name[5]
+death_plt <- df_clean %>% 
+  group_by(Province_State, Last_Update) %>% 
+  summarise(total_deaths=sum(Deaths),
+            total_active=sum(Active),
+            total_confirmed=sum(Confirmed),
+            ) %>% 
+  filter(Province_State == s)
+
+
+ggplot(death_plt)+
+  geom_line(mapping = aes(Last_Update, total_deaths), col=cbPalette[1])+
+  geom_line(mapping = aes(Last_Update, total_active), col=cbPalette[2])+
+  geom_line(mapping = aes(Last_Update, total_confirmed), col=cbPalette[3])+
+  #geom_point()+
+  labs(title = paste0('Number of Deaths in ', s, ' over time'),
+       x='',
+       y='')+
+  theme_minimal()
+
+df_clean %>% 
+  filter(Province_State == s)
+
+df%>% 
+  filter(Province_State == s)
+
+
+
+
+
+
 
 
 

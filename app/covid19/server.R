@@ -18,21 +18,50 @@ check.pkg <- function(x){
 }
 
 lapply(packages.used, check.pkg)
+library(viridis)
+library(dplyr)
+library(tibble)
+library(tidyverse)
+library(shinythemes)
+library(sf)
+library(RCurl)
+library(tmap)
+library(rgdal)
+library(leaflet)
+library(shiny)
+library(shinythemes)
+library(plotly)
+library(ggplot2)
+library(lubridate)
+library(zoo)
+library(shinydashboard)
+library(RColorBrewer)
+
+# load data
+#load("www/df_up_to_date.Rdata")
 source("global_citina.R")
 
+
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
-
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-
-    })
+shinyServer(function(input, output, session) {
+    
+    #-------------------tab1 Home
+    
+    #-------------------tab2 Map
+    
+    #-------------------tab3 Search Panel
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #-------------------tab4 Data Source
+    
 
 })
 

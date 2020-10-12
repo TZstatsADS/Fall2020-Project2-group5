@@ -20,25 +20,58 @@ check.pkg <- function(x){
 
 lapply(packages.used, check.pkg)
 
-# Define UI for application that draws a histogram
-shinyUI(fluidPage(
+library(viridis)
+library(dplyr)
+library(tibble)
+library(tidyverse)
+library(shinythemes)
+library(sf)
+library(RCurl)
+library(tmap)
+library(rgdal)
+library(leaflet)
+library(shiny)
+library(shinythemes)
+library(plotly)
+library(ggplot2)
+library(lubridate)
+library(zoo)
+library(shinydashboard)
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+dashboardPage(
+    skin = "purple",
+    dashboardHeader(title = "COVID 19 in the U.S"),
+    dashboardSidebar(sidebarMenu(
+        menuItem("Home", tabName = "Home", icon = icon("dashboard")),
+        menuItem("MAP", tabName = "MAP", icon = icon("map")),
+        menuItem("SEARCH BY STATE", tabName = "SEARCH", icon = icon("flag-usa")),
+        menuItem("DATA SOURCE", tabName = "DATASOURCE", icon = icon("cloud-download"))
+    )),
+    dashboardBody(fill = FALSE,tabItems(
+        #-------------------tab1 Home
+        
+        #-------------------tab2 Map
+        
+        #-------------------tab3 Search Panel
+        tabItem(tabName = "SEARCH",
+                fluidPage()
+                
+                
+                
+                
+                ),
+        
+        #-------------------tab4 Data Source
+        tabItem(tabName = "Data Source",
+                fluidPage(
+                    HTML(
+                    "<h2> Data Source : </h2>
+                    <h4> <p><li><a href='https://coronavirus.jhu.edu/map.html'>Coronavirus COVID-19 Global Cases map Johns Hopkins University</a></li></h4>
+                    <h4><li>COVID-19 Cases : <a href='https://github.com/CSSEGISandData/COVID-19' target='_blank'>Github Johns Hopkins University</a></li></h4>
+                    <h4><li>Spatial Polygons : <a href='https://www.naturalearthdata.com/downloads/' target='_blank'> Natural Earth</a></li></h4>"
+                )
+                )
+                )
+    ))
+)
 
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
-    )
-))
