@@ -33,14 +33,18 @@ dashboardPage(
         #-------------------tab3 Search Panel
         tabItem(tabName = "SEARCH",
                 fluidPage(
-                    checkboxGroupInput("state1", "Choose Category:",
-                                             choices = c("California", "New York"),
-                                             selected = c("California")
-                           ),
-                          fluidRow(column(width=12, title='Deaths over time',
-                                          plotlyOutput("death_plt")))
+                    fluidRow(
+                        column(4,
+                               selectInput('state1', 'State 1', state.name, selectize=TRUE)
+                        ),
+                        column(4,
+                               selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)
+                        )),
+                    fluidRow(box(width = 12,title = "", 
+                                 plotlyOutput("death_plt")))
                     
-                )),
+                )
+                ),
         
         #-------------------tab4 Data Source
         tabItem(tabName = "DATA SOURCE",
