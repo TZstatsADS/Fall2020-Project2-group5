@@ -39,38 +39,40 @@ dashboardPage(
                 )
         ),
         
+        
+        
+        
+        
         #-------------------tab3 Search Panel
         tabItem(tabName = "SEARCH",
                 fluidRow(column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
                          column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
                          ),
-                # sidebarLayout(
-                #     sidebarPanel(
-                #         selectInput('state1', 'State 1', state.name, selectize=TRUE),
-                #         selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)
-                #     ),
-                #     br()
-                # ),
+                
+                # value boxes
+                fluidRow(
+                    valueBoxOutput('deaths_val'),
+                    valueBoxOutput('confirmed_val'),
+                    valueBoxOutput('active_val')
+                ),
+                fluidRow(
+                    valueBoxOutput('recovered_val'),
+                    valueBoxOutput('peopletested_val'),
+                    valueBoxOutput('incidentrate_val')
+                ),
+                
+                br(),
+                
+                # plots
                 mainPanel(
+                    width = '100%',
                     tabsetPanel(type = 'tabs',
                                 tabPanel('Deaths', plotlyOutput('death_plt')),
-                                tabPanel('Recovered', plotlyOutput('recovered_plt')),
+                                tabPanel('Confirmed', plotlyOutput('confirmed_plt')),
                                 tabPanel('Active', plotlyOutput('active_plt')),
-                                tabPanel('Confirmed', plotlyOutput('confirmed_plt'))
+                                tabPanel('Recovered', plotlyOutput('recovered_plt'))
                                 )
                 )
-                
-                
-                # fluidPage(
-                #     fluidRow(
-                #         column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
-                #         column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
-                #     ),
-                #     fluidRow(
-                #         width = 12,title = "",
-                #         plotlyOutput("death_plt")
-                #     )
-                # )
         ),
         
         #-------------------tab4 Data Source
