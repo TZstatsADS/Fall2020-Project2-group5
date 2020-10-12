@@ -78,41 +78,15 @@ df_clean <- df %>%
 tmpc <- which(df_clean$Active<0)
 df_clean$Active[tmpc] <- round(mean(c(df_clean$Active[tmpc-1], df_clean$Active[tmpc+1])),0)
 
-save(df_clean, file="./output/data_up_to_date.RData")
-
-rm(df)
-rm(temp)
+# save(df_clean, file="output/data_up_to_date.RData")
+#load("output/data_up_to_date.RData")
 # there are 50 states and District of Columbia
 
 # if the data source is not available, will use the data stored (up to 10-08-2020)
 # name: "data_use.Rdata"
 
 cbPalette <- c("#56B4E9", "#D55E00", "#009E73", "#F0E442", "#E69F00", "#0072B2", "#CC79A7", "#F0E449")
-s <- state.name[5]
-death_plt <- df_clean %>% 
-  group_by(Province_State, Last_Update) %>% 
-  summarise(total_deaths=sum(Deaths),
-            total_active=sum(Active),
-            total_confirmed=sum(Confirmed),
-            ) %>% 
-  filter(Province_State == s)
 
-
-ggplot(death_plt)+
-  geom_line(mapping = aes(Last_Update, total_deaths), col=cbPalette[1])+
-  geom_line(mapping = aes(Last_Update, total_active), col=cbPalette[2])+
-  geom_line(mapping = aes(Last_Update, total_confirmed), col=cbPalette[3])+
-  #geom_point()+
-  labs(title = paste0('Number of Deaths in ', s, ' over time'),
-       x='',
-       y='')+
-  theme_minimal()
-
-df_clean %>% 
-  filter(Province_State == s)
-
-df%>% 
-  filter(Province_State == s)
 
 
 

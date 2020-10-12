@@ -6,40 +6,7 @@
 #
 #    http://shiny.rstudio.com/
 #
-# packages used
-packages.used <- 
-    as.list(c("tidyverse", "haven", "plotly", "shiny", "ggplot2", "shinythemes", "tmap", "sf", 
-              "rgdal", "RColorBrewer","tibble", "viridis", "RCurl", "leaflet", "zoo", "lubridate"))
-
-# require and install packages
-check.pkg <- function(x){
-    if(!require(x, character.only=T)) 
-        install.packages(x, character.only=T, dependence=T)
-}
-
-lapply(packages.used, check.pkg)
-library(viridis)
-library(dplyr)
-library(tibble)
-library(tidyverse)
-library(shinythemes)
-library(sf)
-library(RCurl)
-library(tmap)
-library(rgdal)
-library(leaflet)
-library(shiny)
-library(shinythemes)
-library(plotly)
-library(ggplot2)
-library(lubridate)
-library(zoo)
-library(shinydashboard)
-library(RColorBrewer)
-
-# load data
-#load("www/df_up_to_date.Rdata")
-source("global_citina.R")
+#source("global.R")
 
 
 # Define server logic required to draw a histogram
@@ -50,16 +17,31 @@ shinyServer(function(input, output, session) {
     #-------------------tab2 Map
     
     #-------------------tab3 Search Panel
+    input$state1
     
+    df_plt <- df_clean %>% 
+        group_by(Province_State, Last_Update) %>% 
+        summarise(total_deaths=sum(Deaths),
+                  total_active=sum(Active),
+                  total_confirmed=sum(Confirmed),
+                  total_recovered=sum(Recovered)) %>% 
+        filter(Province_State == state1() | Province_State == state2()
+        ) 
     
-    
-    
-    
-    
-    
-    
-    
-    
+
+    death <- ggplot(df_plt)+
+        geom_line(mapping = aes(Last_Update, total_deaths))+
+        #geom_line(mapping = aes(Last_Update, total_active), col=cbPalette[2])+
+        #geom_line(mapping = aes(Last_Update, total_confirmed), col=cbPalette[3])+
+        labs(title = paste0('Number of Deaths in ',' over time'),
+             x='',
+             y='')+
+        #scale_fill_manual(values=cbPalette)+
+        theme_minimal()
+
+    output$death_plt <- renderPlotly({
+        ggplotly(death)
+    })
     #-------------------tab4 Data Source
     
 
