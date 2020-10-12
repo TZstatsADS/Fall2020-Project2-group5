@@ -24,8 +24,19 @@ dashboardPage(
                 
                 ),
         #-------------------tab2 Map
-        tabItem(tabName = "MAP"
-                
+        tabItem(tabName = "MAP",
+                fluidRow(
+                    box('Map', width=9, status='primary',
+                        leafletOutput('drawmap', height=750)
+                    ),
+                    box(width = 3, status='info',
+                        dateInput('DateInput', label = 'Select Date Range',
+                                  min=mindate, max=maxdate, 
+                                  value = mindate),
+                        selectInput('IndicatortInput', label = 'Select Indicator',
+                                    choices=Indicators)
+                    )
+                )
                 
                 
                 ),
@@ -33,18 +44,14 @@ dashboardPage(
         #-------------------tab3 Search Panel
         tabItem(tabName = "SEARCH",
                 fluidPage(
-                    fluidRow(
-                        column(4,
-                               selectInput('state1', 'State 1', state.name, selectize=TRUE)
-                        ),
-                        column(4,
-                               selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)
-                        )),
-                    fluidRow(box(width = 12,title = "", 
-                                 plotlyOutput("death_plt")))
+                    checkboxGroupInput("state1", "Choose Category:",
+                                             choices = c("California", "New York"),
+                                             selected = c("California")
+                           ),
+                          fluidRow(column(width=12, title='Deaths over time',
+                                          plotlyOutput("death_plt")))
                     
-                )
-                ),
+                )),
         
         #-------------------tab4 Data Source
         tabItem(tabName = "DATA SOURCE",
