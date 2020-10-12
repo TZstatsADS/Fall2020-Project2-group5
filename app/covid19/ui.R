@@ -41,17 +41,36 @@ dashboardPage(
         
         #-------------------tab3 Search Panel
         tabItem(tabName = "SEARCH",
-                fluidPage(
-                    fluidRow(
-                        column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
-                        column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
-                    ),
-                    fluidRow(
-                        width = 12,title = "",
-                        plotlyOutput("death_plt")
-                    )
-                    
+                fluidRow(column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
+                         column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
+                         ),
+                # sidebarLayout(
+                #     sidebarPanel(
+                #         selectInput('state1', 'State 1', state.name, selectize=TRUE),
+                #         selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)
+                #     ),
+                #     br()
+                # ),
+                mainPanel(
+                    tabsetPanel(type = 'tabs',
+                                tabPanel('Deaths', plotlyOutput('death_plt')),
+                                tabPanel('Recovered', plotlyOutput('recovered_plt')),
+                                tabPanel('Active', plotlyOutput('active_plt')),
+                                tabPanel('Confirmed', plotlyOutput('confirmed_plt'))
+                                )
                 )
+                
+                
+                # fluidPage(
+                #     fluidRow(
+                #         column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
+                #         column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
+                #     ),
+                #     fluidRow(
+                #         width = 12,title = "",
+                #         plotlyOutput("death_plt")
+                #     )
+                # )
         ),
         
         #-------------------tab4 Data Source

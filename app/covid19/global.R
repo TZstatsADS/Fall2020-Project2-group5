@@ -156,3 +156,37 @@ draw_map = function(df, indicator){
               position = "bottomright")
 }
 
+
+#-------Search Panel
+df_avg <- 
+  df_clean %>% 
+  group_by(Last_Update) %>% 
+  summarise(total_deaths=floor(mean(Deaths)),
+            total_active=floor(mean(Active)),
+            total_confirmed=floor(mean(Confirmed)),
+            total_recovered=floor(mean(Recovered))) %>% 
+  mutate(Province_State = factor('Average')) %>% 
+  select(Province_State, Last_Update, total_deaths, 
+         total_active, total_confirmed, total_recovered)
+  
+
+df_plt <- 
+  df_clean %>% 
+  group_by(Province_State, Last_Update) %>% 
+  summarise(total_deaths=sum(Deaths),
+            total_active=sum(Active),
+            total_confirmed=sum(Confirmed),
+            total_recovered=sum(Recovered)) %>% 
+  as.data.frame() %>% 
+  rbind(df_avg)
+  
+
+
+
+
+
+
+
+
+
+

@@ -27,21 +27,22 @@ shinyServer(function(input, output, session) {
     
     output$drawmap <- renderLeaflet(draw_map(Indicator_data(), input$IndicatortInput))
     
+    
+    
+    
+    
     #-------------------tab3 Search Panel
-    df_plt <- reactive({
-        df_clean %>% 
-            group_by(Province_State, Last_Update) %>% 
-            summarise(total_deaths=sum(Deaths),
-                      total_active=sum(Active),
-                      total_confirmed=sum(Confirmed),
-                      total_recovered=sum(Recovered)) %>% 
-            filter(Province_State == input$state1 | Province_State == input$state2)
+    df_plt2 <- reactive({
+        df_plt %>% 
+            filter(Province_State == input$state1 | 
+                       Province_State == input$state2 | 
+                       Province_State == 'Average')
     })
     
     output$death_plt <- renderPlotly({
-        ggplot(df_plt())+
+        ggplot(df_plt2())+
             geom_line(aes(Last_Update, total_deaths, col=Province_State))+
-            labs(title = paste0('Number of Deaths in ', input$state1, ' vs ', input$state2,' over time'),
+            labs(title = 'Deaths Cases over time',
                  x='',
                  y='')+
             scale_fill_manual(values=cbPalette)+
@@ -49,9 +50,9 @@ shinyServer(function(input, output, session) {
     })
     
     output$active_plt <- renderPlotly({
-        ggplot(df_plt())+
+        ggplot(df_plt2())+
             geom_line(mapping = aes(Last_Update, total_active, col=Province_State))+
-            labs(title = paste0('Number of Deaths in ', input$state1, ' vs ', input$state2,' over time'),
+            labs(title = 'Active Cases over time',
                  x='',
                  y='')+
             scale_fill_manual(values=cbPalette)+
@@ -59,9 +60,19 @@ shinyServer(function(input, output, session) {
     })
     
     output$confirmed_plt <- renderPlotly({
-        ggplot(df_plt())+
+        ggplot(df_plt2())+
             geom_line(mapping = aes(Last_Update, total_confirmed, col=Province_State))+
-            labs(title = paste0('Number of Deaths in ', input$state1, ' vs ', input$state2,' over time'),
+            labs(title = 'Confirmed Cases over time',
+                 x='',
+                 y='')+
+            scale_fill_manual(values=cbPalette)+
+            theme_minimal()
+    })
+    
+    output$recovered_plt <- renderPlotly({
+        ggplot(df_plt2())+
+            geom_line(mapping = aes(Last_Update, total_recovered, col=Province_State))+
+            labs(title = 'Recovered Cases over time',
                  x='',
                  y='')+
             scale_fill_manual(values=cbPalette)+
