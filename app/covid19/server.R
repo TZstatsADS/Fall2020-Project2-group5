@@ -14,6 +14,7 @@ shinyServer(function(input, output, session) {
     
     #-------------------tab1 Home
     
+
     #-------------------tab2 Map
     date_data = reactive({
         data %>% filter(Last_Update == input$DateInput)
@@ -27,9 +28,7 @@ shinyServer(function(input, output, session) {
     
     output$drawmap <- renderLeaflet(draw_map(Indicator_data(), input$IndicatortInput))
     
-    
-    
-    
+
     
     #-------------------tab3 Search Panel
     df_plt2 <- reactive({
@@ -39,47 +38,89 @@ shinyServer(function(input, output, session) {
                        Province_State == 'Average')
     })
     
+    # switch to %
+    
+    # deaths
+    prect_or_freq <- reactive(input$prect)
+    
     output$death_plt <- renderPlotly({
         ggplot(df_plt2())+
             geom_line(aes(Last_Update, total_deaths, col=Province_State))+
-            labs(title = 'Deaths Cases over time',
+            labs(title = 'Deaths Cases Over Time',
                  x='',
                  y='')+
-            scale_fill_manual(values=cbPalette)+
             theme_minimal()
     })
     
+    # observeEvent(input$prect, {
+    #     updateSelectInput(session, death_plt, choices = c('prect_deaths', 'total_deaths'), selected='total_deaths')
+    # })
+    
+    # active
     output$active_plt <- renderPlotly({
         ggplot(df_plt2())+
             geom_line(mapping = aes(Last_Update, total_active, col=Province_State))+
-            labs(title = 'Active Cases over time',
+            labs(title = 'Active Cases Over Time',
                  x='',
                  y='')+
-            scale_fill_manual(values=cbPalette)+
             theme_minimal()
     })
     
+    # confirmed
     output$confirmed_plt <- renderPlotly({
         ggplot(df_plt2())+
             geom_line(mapping = aes(Last_Update, total_confirmed, col=Province_State))+
-            labs(title = 'Confirmed Cases over time',
+            labs(title = 'Confirmed Cases Over Time',
                  x='',
                  y='')+
-            scale_fill_manual(values=cbPalette)+
             theme_minimal()
     })
     
+    # recovered
     output$recovered_plt <- renderPlotly({
         ggplot(df_plt2())+
             geom_line(mapping = aes(Last_Update, total_recovered, col=Province_State))+
-            labs(title = 'Recovered Cases over time',
+            labs(title = 'Recovered Cases Over Time',
                  x='',
-                 y='')+
-            scale_fill_manual(values=cbPalette)+
+                 y='',
+                 color='')+
             theme_minimal()
     })
+    
+    # info box part
+    output$deaths_val <- renderValueBox({
+        valueBox(df_plt2()$total_deaths[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                 'DEATHS',
+                 icon = icon("skull-crossbones"), color = 'red')
+    })
+    output$confirmed_val <- renderValueBox({
+        valueBox(df_plt2()$total_confirmed[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                 'CONFIRMED',
+                 icon = icon("viruses"), color = 'orange')
+    })
+    output$active_val <- renderValueBox({
+        valueBox(df_plt2()$total_active[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                 'ACTIVE',
+                 icon = icon("head-side-mask"), color = 'yellow')
+    })
+    output$recovered_val <- renderValueBox({
+        valueBox(df_plt2()$total_recovered[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                 'RECOVERED',
+                 icon = icon("heart"), color = 'green')
+    })
+    output$peopletested_val <- renderValueBox({
+        valueBox(df_plt2()$People_Tested[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                 'PEOPLE TESTED',
+                 icon = icon("vial"), color = 'blue')
+    })
+    output$incidentrate_val <- renderValueBox({
+        valueBox(df_plt2()$Incident_Rate[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                 'INCIDENT RATE',
+                 icon = icon("running"), color = 'aqua')
+    })
+    
+    
     #-------------------tab4 Data Source
     
     
 })
-
