@@ -45,7 +45,8 @@ dashboardPage(
                 fluidRow(column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
                          column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)),
                          br(),
-                         column(4, switchInput('prect', '%'))
+                         column(4, switchInput('prect', '%')),
+                         verbatimTextOutput("value")
                 ),
                 
                 # value boxes

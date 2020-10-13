@@ -31,30 +31,38 @@ shinyServer(function(input, output, session) {
 
     
     #-------------------tab3 Search Panel
+    # switch to %
+    prect_or_freq <- reactive({
+        ifelse(input$prect, 'prect_deaths', 'total_deaths')
+        #input$prect
+    })
+
+    # deaths
     df_plt2 <- reactive({
         df_plt %>% 
             filter(Province_State == input$state1 | 
                        Province_State == input$state2 | 
                        Province_State == 'Average')
     })
-    
-    # switch to %
-    
-    # deaths
-    prect_or_freq <- reactive(input$prect)
-    
+
+    df_plt3 <- reactive({
+        df_plt %>%
+            filter(Province_State == input$state1 |
+                       Province_State == input$state2 |
+                       Province_State == 'Average') %>%
+            select(Last_Update, Province_State, y = prect_or_freq())
+    })
+
     output$death_plt <- renderPlotly({
-        ggplot(df_plt2())+
-            geom_line(aes(Last_Update, total_deaths, col=Province_State))+
+        #df_plt2()$y <- ifelse(prect_or_freq(), df_plt2()['prect_deaths'], df_plt2()['total_deaths'])
+        ggplot(df_plt3())+
+            geom_line(aes(Last_Update, y, col=Province_State))+
             labs(title = 'Deaths Cases Over Time',
                  x='',
-                 y='')+
+                 y='',
+                 col='States')+
             theme_minimal()
     })
-    
-    # observeEvent(input$prect, {
-    #     updateSelectInput(session, death_plt, choices = c('prect_deaths', 'total_deaths'), selected='total_deaths')
-    # })
     
     # active
     output$active_plt <- renderPlotly({
@@ -62,7 +70,8 @@ shinyServer(function(input, output, session) {
             geom_line(mapping = aes(Last_Update, total_active, col=Province_State))+
             labs(title = 'Active Cases Over Time',
                  x='',
-                 y='')+
+                 y='',
+                 col='States')+
             theme_minimal()
     })
     
@@ -72,7 +81,8 @@ shinyServer(function(input, output, session) {
             geom_line(mapping = aes(Last_Update, total_confirmed, col=Province_State))+
             labs(title = 'Confirmed Cases Over Time',
                  x='',
-                 y='')+
+                 y='',
+                 col='States')+
             theme_minimal()
     })
     
@@ -83,7 +93,7 @@ shinyServer(function(input, output, session) {
             labs(title = 'Recovered Cases Over Time',
                  x='',
                  y='',
-                 color='')+
+                 col='States')+
             theme_minimal()
     })
     
