@@ -25,54 +25,52 @@ dashboardPage(
         ),
         #-------------------tab2 Map
         tabItem(tabName = "MAP",
-                fluidRow(
-                    box('Map', width=9, status='primary',
-                        leafletOutput('drawmap', height=750)
-                    ),
-                    box(width = 3, status='info',
-                        dateInput('DateInput', label = 'Select Date Range',
+                fluidPage(
+                    fluidRow(leafletOutput('drawmap', height=750)),
+                    fluidRow(absolutePanel(top = 100, right = 20,
+                        dateInput('DateInput', label = 'Select Date',
                                   min=mindate, max=maxdate, 
                                   value = mindate),
                         selectInput('IndicatortInput', label = 'Select Indicator',
                                     choices=Indicators)
+                        )
                     )
                 )
+                
         ),
-        
-        
-        
-        
         
         #-------------------tab3 Search Panel
         tabItem(tabName = "SEARCH",
                 fluidRow(column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
                          column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
                          ),
-                
-                # value boxes
-                fluidRow(
-                    valueBoxOutput('deaths_val'),
-                    valueBoxOutput('confirmed_val'),
-                    valueBoxOutput('active_val')
-                ),
-                fluidRow(
-                    valueBoxOutput('recovered_val'),
-                    valueBoxOutput('peopletested_val'),
-                    valueBoxOutput('incidentrate_val')
-                ),
-                
-                br(),
-                
-                # plots
+                # sidebarLayout(
+                #     sidebarPanel(
+                #         selectInput('state1', 'State 1', state.name, selectize=TRUE),
+                #         selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)
+                #     ),
+                #     br()
+                # ),
                 mainPanel(
-                    width = '100%',
                     tabsetPanel(type = 'tabs',
                                 tabPanel('Deaths', plotlyOutput('death_plt')),
-                                tabPanel('Confirmed', plotlyOutput('confirmed_plt')),
+                                tabPanel('Recovered', plotlyOutput('recovered_plt')),
                                 tabPanel('Active', plotlyOutput('active_plt')),
-                                tabPanel('Recovered', plotlyOutput('recovered_plt'))
+                                tabPanel('Confirmed', plotlyOutput('confirmed_plt'))
                                 )
                 )
+                
+                
+                # fluidPage(
+                #     fluidRow(
+                #         column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
+                #         column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE))
+                #     ),
+                #     fluidRow(
+                #         width = 12,title = "",
+                #         plotlyOutput("death_plt")
+                #     )
+                # )
         ),
         
         #-------------------tab4 Data Source
