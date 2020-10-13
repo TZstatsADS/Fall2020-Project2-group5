@@ -99,7 +99,7 @@ cbPalette <- c("#56B4E9", "#D55E00", "#009E73", "#F0E442", "#E69F00", "#0072B2",
 
 #--------map
 load("output/data_up_to_date.RData")
-data = df_clean
+data = df_clean %>% select("Province_State","Country_Region", "Last_Update", "Lat", "Long_", "Confirmed","Deaths", "Recovered", "Active", "FIPS", "Incident_Rate", "People_Tested", "People_Hospitalized", "Mortality_Rate", "UID", "ISO3","Testing_Rate", "Hospitalization_Rate" )
 
 date = data$Last_Update %>% unique()
 mindate = date[1]
@@ -162,7 +162,6 @@ draw_map = function(df, indicator){
               title = NULL,
               position = "bottomright")
 }
-
 
 #-------Search Panel
 df_avg <- 
