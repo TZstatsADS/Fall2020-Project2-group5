@@ -248,7 +248,7 @@ newcases <- cases_total_date[,"New_Cases"]
 ##4
 new_cases_calendar<-calendarPlot(data.frame(newcases, date), pollutant = 'New_Cases', year = 2020, main = "New Cases",cols = "BrBG")
 
-###Xiangning Han ===================
+###Xiangning Han =====================
 
 
 
