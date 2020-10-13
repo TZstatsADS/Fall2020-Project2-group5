@@ -45,8 +45,7 @@ dashboardPage(
                 fluidRow(column(4, selectInput('state1', 'State 1', state.name, selectize=TRUE)),
                          column(4, selectInput('state2', 'State 2', c(Choose='', state.name), selectize=TRUE)),
                          br(),
-                         column(4, switchInput('prect', '%')),
-                         verbatimTextOutput("value")
+                         column(4, switchInput('prect', '%'))
                 ),
                 
                 # value boxes
@@ -70,7 +69,8 @@ dashboardPage(
                                 tabPanel('Deaths', plotlyOutput('death_plt')),
                                 tabPanel('Confirmed', plotlyOutput('confirmed_plt')),
                                 tabPanel('Active', plotlyOutput('active_plt')),
-                                tabPanel('Recovered', plotlyOutput('recovered_plt'))
+                                tabPanel('Recovered', plotlyOutput('recovered_plt')),
+                                tabPanel('Incident Rate', plotlyOutput('incidentrate_plt'))
                     )
                 )
         ),

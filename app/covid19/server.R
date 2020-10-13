@@ -31,32 +31,36 @@ shinyServer(function(input, output, session) {
 
     
     #-------------------tab3 Search Panel
-    # switch to %
+    # switch freq and %
     prect_or_freq <- reactive({
-        ifelse(input$prect, 'prect_deaths', 'total_deaths')
-        #input$prect
+        #ifelse(input$prect, 'prect_deaths', 'total_deaths')
+        input$prect
     })
-
-    # deaths
+    
     df_plt2 <- reactive({
-        df_plt %>% 
+        tmp <- 
+            df_plt %>% 
             filter(Province_State == input$state1 | 
                        Province_State == input$state2 | 
                        Province_State == 'Average')
+        if(prect_or_freq()){
+            tmp$y_d <- tmp$prect_deaths
+            tmp$y_a <- tmp$prect_active
+            tmp$y_c <- tmp$prect_confirmed
+            tmp$y_r <- tmp$prect_recovered
+        }else{
+            tmp$y_d = tmp$total_deaths
+            tmp$y_a = tmp$total_active
+            tmp$y_c = tmp$total_confirmed
+            tmp$y_r = tmp$total_recovered
+        }
+        tmp
     })
-
-    df_plt3 <- reactive({
-        df_plt %>%
-            filter(Province_State == input$state1 |
-                       Province_State == input$state2 |
-                       Province_State == 'Average') %>%
-            select(Last_Update, Province_State, y = prect_or_freq())
-    })
-
+    
+    # deaths
     output$death_plt <- renderPlotly({
-        #df_plt2()$y <- ifelse(prect_or_freq(), df_plt2()['prect_deaths'], df_plt2()['total_deaths'])
-        ggplot(df_plt3())+
-            geom_line(aes(Last_Update, y, col=Province_State))+
+        ggplot(df_plt2())+
+            geom_line(aes(Last_Update, y_d, col=Province_State))+
             labs(title = 'Deaths Cases Over Time',
                  x='',
                  y='',
@@ -67,7 +71,7 @@ shinyServer(function(input, output, session) {
     # active
     output$active_plt <- renderPlotly({
         ggplot(df_plt2())+
-            geom_line(mapping = aes(Last_Update, total_active, col=Province_State))+
+            geom_line(mapping = aes(Last_Update, y_a, col=Province_State))+
             labs(title = 'Active Cases Over Time',
                  x='',
                  y='',
@@ -78,7 +82,7 @@ shinyServer(function(input, output, session) {
     # confirmed
     output$confirmed_plt <- renderPlotly({
         ggplot(df_plt2())+
-            geom_line(mapping = aes(Last_Update, total_confirmed, col=Province_State))+
+            geom_line(mapping = aes(Last_Update, y_c, col=Province_State))+
             labs(title = 'Confirmed Cases Over Time',
                  x='',
                  y='',
@@ -89,13 +93,25 @@ shinyServer(function(input, output, session) {
     # recovered
     output$recovered_plt <- renderPlotly({
         ggplot(df_plt2())+
-            geom_line(mapping = aes(Last_Update, total_recovered, col=Province_State))+
+            geom_line(mapping = aes(Last_Update, y_r, col=Province_State))+
             labs(title = 'Recovered Cases Over Time',
                  x='',
                  y='',
                  col='States')+
             theme_minimal()
     })
+    
+    # incident rate
+    output$incidentrate_plt <- renderPlotly({
+        ggplot(df_plt2())+
+            geom_line(mapping = aes(Last_Update, Incident_Rate, col=Province_State))+
+            labs(title = 'Incident Rate Over Time',
+                 x='',
+                 y='',
+                 col='States')+
+            theme_minimal()
+    })
+
     
     # info box part
     output$deaths_val <- renderValueBox({
