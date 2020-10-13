@@ -1,7 +1,8 @@
 #------------------------------this code is used to update the data daily---------------------------------
 # packages used
 packages.used <- 
-  as.list(c("tidyverse", "haven", "plotly", "shiny", "ggplot2", "shinythemes", "tmap", "sf", "RColorBrewer","tibble", "viridis", "RCurl", "leaflet", "zoo", "lubridate",
+  as.list(c("tidyverse", "haven", "plotly", "shiny", "ggplot2", "shinythemes", "tmap", "sf", 
+            "rgdal", "RColorBrewer","tibble", "viridis", "RCurl", "leaflet", "zoo", "lubridate",
             "RColorBrewer", "maps","leaflet.extras","htmltools", "shinyWidgets", "highcharter",
             "gganimate", "geosphere", "scales", "viridisLite", "ggdark", "DT", "openair", "readr",
             "ggthemes"))
@@ -50,7 +51,7 @@ library(ggdark)
 # read up to date data from JHU
 # urlpart1 <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/"
 # start <- as.Date("2020-04-12")
-#
+# 
 # if(month(start)<10){
 #   if(day(start)<10){
 #     df <- read.csv(text = getURL(paste0(urlpart1, '0', month(start), "-", '0', day(start), "-", year(start), ".csv")))
@@ -64,7 +65,7 @@ library(ggdark)
 #     df <- read.csv(text = getURL(paste0(urlpart1, month(start), "-", day(start), "-", year(start), ".csv")))
 #   }
 # }
-#
+#   
 # for (i in (start+1):(Sys.Date()-1)) {
 #   t <- as.Date(i)
 #   if(month(t)<10){
@@ -82,22 +83,22 @@ library(ggdark)
 #   }
 #   df <- rbind(df, temp)
 # }
-#
-# df_clean <- df %>%
-#   mutate(Last_Update = as.Date(Last_Update)) %>%
-#   filter(ISO3 == 'USA') %>%
-#   filter(FIPS < 100) %>%
-#   droplevels() %>%
+# 
+# df_clean <- df %>% 
+#   mutate(Last_Update = as.Date(Last_Update)) %>% 
+#   filter(ISO3 == 'USA') %>% 
+#   filter(FIPS < 100) %>% 
+#   droplevels() %>% 
 #   mutate(Recovered=ifelse(is.na(Recovered), 0, Recovered))
-#
+# 
 # tmpc <- which(df_clean$Active<0)
 # df_clean$Active[tmpc] <- round(mean(c(df_clean$Active[tmpc-1], df_clean$Active[tmpc+1])),0)
 
 # adding population variable:
 # df_add <- read.csv(text = getURL("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv"))
-# df_clean <-
-#   df_add %>%
-#   select(FIPS, Population) %>%
+# df_clean <- 
+#   df_add %>% 
+#   select(FIPS, Population) %>% 
 #   merge(df_clean, by='FIPS')
 
 # save(df_clean, file="output/data_up_to_date.RData")
@@ -223,7 +224,7 @@ cases_total_date<-
   summarise(Confirmed = sum(Confirmed), .groups = 'drop')%>%
   mutate("New_Cases" = Confirmed - lag(Confirmed, 1))
 confirmed <- cases_total_date[,"Confirmed"]
-date<-cases_total_date$Last_Update
+date <-  recovered_total_date$Last_Update
 
 ##1
 cases_calendar<-calendarPlot(data.frame(confirmed, date), pollutant = 'Confirmed', year = 2020, main = "Confirmed Cases", bg.col='transparent')
@@ -232,7 +233,6 @@ recovered_total_date<-
   group_by(Last_Update)%>%
   summarise(Recovered = sum(na.omit(Recovered)), .groups = 'drop')
 recovered <- recovered_total_date[,"Recovered"]
-date<-recovered_total_date$Last_Update
 ##2
 recovered_calendar<-calendarPlot(data.frame(recovered, date), pollutant = 'Recovered', year = 2020, main = "Recovered cases",cols = "PiYG")
 
@@ -241,14 +241,13 @@ deaths_total_date<-
   group_by(Last_Update)%>%
   summarise(Deaths = sum(na.omit(Recovered)), .groups = 'drop')
 deaths <- deaths_total_date[,"Deaths"]
-date<-deaths_total_date$Last_Update
 ##3
 death_calendar<-calendarPlot(data.frame(deaths, date), pollutant = 'Deaths', year = 2020, main = "Deaths Case", cols = "RdGy")
 newcases <- cases_total_date[,"New_Cases"]
 ##4
 new_cases_calendar<-calendarPlot(data.frame(newcases, date), pollutant = 'New_Cases', year = 2020, main = "New Cases",cols = "BrBG")
 
-###Xiangning Han =====================
+###Xiangning Han ===================
 
 
 

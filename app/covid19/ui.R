@@ -14,11 +14,7 @@ dashboardPage(
         menuItem("HOME", tabName = "HOME", icon = icon("dashboard")),
         menuItem("MAP", tabName = "MAP", icon = icon("map")),
         menuItem("SEARCH", tabName = "SEARCH", icon = icon("flag-usa")),
-        menuItem("Statistics analysis",tabName="Statistics analysis",icon=icon("pencil-ruler"),startExpanded=TRUE,
-                 menuSubItem("Calendar",tabName="Calendar",icon=icon("calendar")),
-                 menuSubItem("Ranking",tabName="Ranking",icon=icon("table")),
-                 menuSubItem("Summary",tabName="Summary", icon=icon("chart-line"))),
-        menuItem("About",tabName="about",icon=icon("sign-out"))
+        menuItem("ABOUT", tabName = "ABOUT", icon = icon("cloud-download"))
     )),
     dashboardBody(fill = FALSE,tabItems(
         #-------------------tab1 Home
@@ -26,24 +22,19 @@ dashboardPage(
                 fluidRow(
                     valueBoxOutput("total_case"),
                     valueBoxOutput("total_recovered"),
-                    valueBoxOutput("total_death")),
-                fluidRow(box(width =  12, title = "US COVID-19 Cases by Day",
-                             plotlyOutput("total_by_date"))),
-                fluidRow(box(width =  12, title = "The Mortality_rate and the Recovery_rate by Day",
-                             plotlyOutput("rate_by_date"))
-                )),
+                    valueBoxOutput("total_death"))),
         
         #-------------------tab2 Map
         tabItem(tabName = "MAP",
                 fluidPage(
                     fluidRow(leafletOutput('drawmap', height=750)),
                     fluidRow(absolutePanel(top = 100, right = 20,
-                                           dateInput('DateInput', label = 'Select Date',
-                                                     min=mindate, max=maxdate, 
-                                                     value = mindate),
-                                           selectInput('IndicatortInput', label = 'Select Indicator',
-                                                       choices=Indicators)
-                    )
+                        dateInput('DateInput', label = 'Select Date',
+                                  min=mindate, max=maxdate, 
+                                  value = mindate),
+                        selectInput('IndicatortInput', label = 'Select Indicator',
+                                    choices=Indicators)
+                        )
                     )
                 )
                 
@@ -81,60 +72,11 @@ dashboardPage(
                 )
         ),
         
-        #-------------------tab4 Statstics analysis
-        ##sub1--------------------------------------
-        tabItem(tabName = "Calendar",
-                fluidPage(
-                    fluidRow(
-                        (tabBox(
-                            width=12,
-                            title = "Calendar Plot",
-                            tabPanel("Confirmed", plotOutput("cases_cald")),
-                            tabPanel("Recovered", plotOutput("recovered_cald")),
-                            tabPanel("Deaths",plotOutput("death_cald")),
-                            tabPanel("New case",plotOutput("newcase_cald"))
-                        )))
-                )
-        ),
-        ##sub2------------------------------------------------
-        tabItem(tabName = "Summary",
-                fluidPage(
-                    fluidRow(column(12,
-                                    h4("In this part, we made the barchart of overall Confirmed cases / Recovered cases / Deaths over time/ Hospitalization_rate."),
-                                    tags$div(tags$ul(
-                                        tags$li(h4("The first barchart demonstrates overall Confirmed cases.")),
-                                        tags$li(h4("The second barchart demonstrates Recovered cases.")),
-                                        tags$li(h4("The third barchart demonstrates Deaths cases.")),
-                                        tags$li(h4("The forth barchart demonstrates Hospitalization_rate ")))
-                                    )),
-                             fluidRow(column(width =  12, title = "Overall Confirmed cases",
-                                             plotOutput("confirmed"))),
-                             fluidRow(column(width =  12, title = "Recovered cases",
-                                             plotOutput("recover_plt"))),
-                             fluidRow(column(width =  12, title = "Deaths cases",
-                                             plotOutput("deaths_plt"))),
-                             fluidRow(column(width =  12, title = "Hospitalization_rate",
-                                             plotOutput("Hospitalization_rate")))
-                             
-                    ))),
-        
-        tabItem(tabName = "Ranking",
-                fluidPage(
-                    fluidRow(
-                        (tabBox(
-                            width=12,
-                            title = "Top 10 State Analysis",
-                            tabPanel("Top 10 Confirmed", plotlyOutput("top_10_confirmed")),
-                            tabPanel("Top 10 Recovered", plotlyOutput("top_10_recovered")),
-                            tabPanel("Top 10 Deaths",plotlyOutput("top_10_deaths"))
-                        )))
-                )),
-        #-------------------tab5 About
-        tabItem(tabName = "about",
+        #-------------------tab4 About
+        tabItem(tabName = "ABOUT",
                 fluidPage(
                     mainPanel( width=12,
-                               img(src="../covid1.jpeg", width = "100%", height = "100%"),
-                               
+                               plotOutput('cases_cald'),
                                h1(strong("What you'll find here"),align = "center"),
                                column(12,
                                       tags$ul(
@@ -148,12 +90,13 @@ dashboardPage(
                                       h4(" We used the date data from JHU.This dataset contains daily updated data of confirmed cases, recovered cases,deaths cases,test,hospitaliaztion information.
                          The data is from Arp.12,2020 to Ocb.11,2020. We just keep 50 states and District of Columbia data for further exploration."),
                                       hr(),
-                                      img(src="../data.png", width = "100%", height = "30%",align = "center")),
+                                      
+                                      ),
                                br(),
                                column(12,
                                       h1(strong("About the team"),align = "center"),
                                       h4("The covid-19 US Spread App is creadted by
-                           Citina Liang; Henan Xu; Xiangning Han." ,align = "center"),
+                           Citina Liang, Henan Xu, and Xiangning Han." ,align = "center"),
                                       br(),br()
                                )),
                 ),
@@ -162,6 +105,6 @@ dashboardPage(
         
     ))
 )
-    
+
 
 
