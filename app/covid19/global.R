@@ -3,7 +3,9 @@
 packages.used <- 
   as.list(c("tidyverse", "haven", "plotly", "shiny", "ggplot2", "shinythemes", "tmap", "sf", 
             "rgdal", "RColorBrewer","tibble", "viridis", "RCurl", "leaflet", "zoo", "lubridate",
-            "RColorBrewer", "maps","leaflet.extras","htmltools", "shinyWidgets"))
+            "RColorBrewer", "maps","leaflet.extras","htmltools", "shinyWidgets", "highcharter",
+            "gganimate", "geosphere", "scales", "viridisLite", "ggdark", "DT", "openair", "readr",
+            "ggthemes"))
 
 # require and install packages
 check.pkg <- function(x){
@@ -21,7 +23,7 @@ library(shinythemes)
 library(sf)
 library(RCurl)
 #library(tmap)
-library(rgdal)
+#library(rgdal)
 library(leaflet)
 library(shiny)
 library(shinythemes)
@@ -35,6 +37,16 @@ library(htmltools)
 library(leaflet.extras)
 library(maps)
 library(shinyWidgets)
+library(highcharter)
+library(DT)
+library(openair)
+library(readr)
+library(ggthemes)
+library(gganimate)
+library(geosphere)
+library(scales)
+library(viridisLite)
+library(ggdark)
 
 # read up to date data from JHU
 # urlpart1 <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports_us/"
@@ -203,7 +215,39 @@ df_plt <-
   rbind(df_avg)
 
 
+####xiangning Han begin======================================
+corona<-df_clean %>% select(-Population)
+#First Total cases by date
+cases_total_date<-
+  corona%>%
+  group_by(Last_Update)%>%
+  summarise(Confirmed = sum(Confirmed), .groups = 'drop')%>%
+  mutate("New_Cases" = Confirmed - lag(Confirmed, 1))
+confirmed <- cases_total_date[,"Confirmed"]
+date <-  recovered_total_date$Last_Update
 
+##1
+cases_calendar<-calendarPlot(data.frame(confirmed, date), pollutant = 'Confirmed', year = 2020, main = "Confirmed Cases", bg.col='transparent')
+recovered_total_date<-
+  corona%>%
+  group_by(Last_Update)%>%
+  summarise(Recovered = sum(na.omit(Recovered)), .groups = 'drop')
+recovered <- recovered_total_date[,"Recovered"]
+##2
+recovered_calendar<-calendarPlot(data.frame(recovered, date), pollutant = 'Recovered', year = 2020, main = "Recovered cases",cols = "PiYG")
+
+deaths_total_date<-
+  corona%>%
+  group_by(Last_Update)%>%
+  summarise(Deaths = sum(na.omit(Recovered)), .groups = 'drop')
+deaths <- deaths_total_date[,"Deaths"]
+##3
+death_calendar<-calendarPlot(data.frame(deaths, date), pollutant = 'Deaths', year = 2020, main = "Deaths Case", cols = "RdGy")
+newcases <- cases_total_date[,"New_Cases"]
+##4
+new_cases_calendar<-calendarPlot(data.frame(newcases, date), pollutant = 'New_Cases', year = 2020, main = "New Cases",cols = "BrBG")
+
+###Xiangning Han ===================
 
 
 

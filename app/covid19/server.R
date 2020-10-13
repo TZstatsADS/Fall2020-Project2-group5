@@ -111,8 +111,7 @@ shinyServer(function(input, output, session) {
                  col='States')+
             theme_minimal()
     })
-
-    
+  
     # info box part
     output$deaths_val <- renderValueBox({
         valueBox(df_plt2()$total_deaths[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
@@ -145,8 +144,136 @@ shinyServer(function(input, output, session) {
                  icon = icon("running"), color = 'aqua')
     })
     
+    #-------------------tab4 About
+    #subtab calendar
+    output$cases_cald<-renderPlot({
+      plot(cases_calendar)
+    })
+    output$recovered_cald<-renderPlot({
+      plot(recovered_calendar)
+    })
+    output$death_cald<-renderPlot({
+      plot(death_calendar)
+    })
+    output$newcase_cald<-renderPlot({
+      plot(new_cases_calendar)
+    })
     
-    #-------------------tab4 Data Source
+    #-------------------tab5 Statistics analysis
+    #subtab summary
+    output$comfirmed<-renderPlot({
+      ggplot(corona,aes(x =Last_Update, y= Confirmed, fill = Confirmed)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "D") +
+        labs(fill = "Confirmed", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    output$recover_plt<-renderPlot({
+      corona %>%
+        ggplot(aes(x = Last_Update, y= Deaths, fill = Deaths)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "C") +
+        labs(fill = "Deaths", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    output$deaths_plt<-renderPlot({
+      corona %>%
+        ggplot(aes(x = Last_Update, y= Recovered, fill = Recovered)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "A") +
+        labs(fill = "Recovered", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    output$Hospitalization_rate<-renderPlot({
+      corona %>%
+        ggplot(aes(x = Last_Update, y= Hospitalization_Rate, fill = Hospitalization_Rate)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "A") +
+        labs(fill = "Hospitalization_Rate", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    #subtab ranking
+    top_10_confirmed <- corona %>%
+      select(Last_Update,Province_State, Confirmed) %>%
+      group_by(Province_State)%>%
+      summarise(Confirmed=sum(Confirmed),.groups = 'drop')%>%
+      arrange(desc(Confirmed))
+    output$top_10_confirmed<-renderPlotly({top_10_confirmed[1:10,] %>%
+        ggplot(aes(x = reorder(`Province_State`,Confirmed), y = Confirmed )) +
+        geom_bar(stat = "identity", fill  = "red", width = 0.8) +
+        theme_economist() +
+        scale_y_continuous(breaks = seq(0, 55000000, by = 5000000), labels = comma) +
+        coord_flip() +
+        labs(x = "", y = "", title = "Top 10 (the Most Confirmed Cases)") +
+        theme(axis.text.x = element_text(angle = 60)) +
+        theme(axis.title = element_text(size = 14, colour = "black"),
+              axis.text.y = element_text(size = 11, face = "bold"))})
+    
+    top_10_recover <- corona %>%
+      select(Last_Update,Province_State, Recovered) %>%
+      group_by(Province_State)%>%
+      summarise(Recovered=sum(Recovered),.groups = 'drop')%>%
+      arrange(desc(Recovered))
+    output$top_10_recovered<-renderPlotly({
+      top_10_recover[1:10,] %>%
+        ggplot(aes(x = reorder(`Province_State`,Recovered), y = Recovered )) +
+        geom_bar(stat = "identity", fill  = "red", width = 0.8) +
+        theme_economist() +
+        scale_y_continuous(breaks = seq(0, 55000000, by = 5000000), labels = comma) +
+        coord_flip() +
+        labs(x = "", y = "", title = "Top 10 (the Most Recovered Cases)") +
+        theme(axis.text.x = element_text(angle = 60)) +
+        theme(axis.title = element_text(size = 14, colour = "black"),
+              axis.text.y = element_text(size = 11, face = "bold"))})
+    
+    top_10_death <- corona %>%
+      select(Last_Update,Province_State, Deaths) %>%
+      group_by(Province_State)%>%
+      summarise(Deaths=sum(Deaths),.groups = 'drop')%>%
+      arrange(desc(Deaths))
+    output$top_10_deaths<-renderPlotly({
+      top_10_death[1:10,] %>%
+        ggplot(aes(x = reorder(`Province_State`,Deaths), y = Deaths )) +
+        geom_bar(stat = "identity", fill  = "red", width = 0.8) +
+        theme_economist() +
+        scale_y_continuous(breaks = seq(0, 5500000, by = 500000), labels = comma) +
+        coord_flip() +
+        labs(x = "", y = "", title = "Top 10 (the Most Deaths Cases)") +
+        theme(axis.text.x = element_text(angle = 60)) +
+        theme(axis.title = element_text(size = 14, colour = "black"),
+              axis.text.y = element_text(size = 11, face = "bold"))})
+    
+    #-------------------tab1 home
+    output$total_case <- renderValueBox({
+      corona%>%
+        summarise(total_case=sum(Confirmed))%>%
+        .$total_case%>%
+        valueBox(subtitle = "Total Case Confirmed",
+                 icon = icon("disease"),
+                 color = "red")
+    })
+    
+    output$total_recovered <- renderValueBox({
+      corona %>%
+        summarise(total_recovered = sum(Recovered))%>%
+        .$total_recovered %>%
+        valueBox(subtitle = "Total Recovered Case",
+                 icon = icon("smile-wink"),
+                 color = "green")
+    })
+    
+    output$total_death <- renderValueBox({
+      corona %>%
+        summarise(total_death = sum(Deaths))%>%
+        .$total_death %>%
+        valueBox(subtitle = "Total Dead Case",
+                 icon = icon("user-alt-slash"),
+                 color = "purple")
+    })
     
     
 })
