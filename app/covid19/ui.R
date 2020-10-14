@@ -6,7 +6,6 @@
 #
 #    http://shiny.rstudio.com/
 #
-
 dashboardPage(
     skin = "purple",
     dashboardHeader(title = "COVID-19 in the U.S."),
@@ -96,7 +95,7 @@ dashboardPage(
                         )))
                 )
         ),
-        ##sub2------------------------------------------------
+        ##sub3------------------------------------------------
         tabItem(tabName = "Summary",
                 fluidPage(
                     fluidRow(column(12,
@@ -117,7 +116,7 @@ dashboardPage(
                                              plotOutput("Hospitalization_rate")))
                              
                     ))),
-        
+        ##sub2------------------------------------------------
         tabItem(tabName = "Ranking",
                 fluidPage(
                     fluidRow(
@@ -133,22 +132,22 @@ dashboardPage(
         tabItem(tabName = "about",
                 fluidPage(
                     mainPanel( width=12,
-                               img(src="../covid1.jpeg", width = "100%", height = "100%"),
+                               img(src="covid1.jpeg", width = "100%", height = "100%"),
                                
-                               h1(strong("What you'll find here"),align = "center"),
+                               h1(strong("What you'll find from the web"),align = "center"),
                                column(12,
                                       tags$ul(
                                           tags$li(h4("In this project, we designed a shiny app with information about covid-19 in US." )), 
-                                          tags$li(h4("By covid 19 us shiny app, we can easily find the information about the US cases spread map,state to state comparison,daily update of the cases,etc."))
+                                          tags$li(h4("By covid 19 US shiny app, you can easily find the information about the US cases spread map,state to state comparison,daily update of the cases,etc."))
                                       )
                                ),
                                br(),
                                h1(strong("About the Data"),align = "center"),
                                column(12,
                                       h4(" We used the date data from JHU.This dataset contains daily updated data of confirmed cases, recovered cases,deaths cases,test,hospitaliaztion information.
-                         The data is from Arp.12,2020 to Ocb.11,2020. We just keep 50 states and District of Columbia data for further exploration."),
+                         The data is up-to-date from 2020-04-12. We just keep 50 states and District of Columbia data for further exploration."),
                                       hr(),
-                                      img(src="../data.png", width = "100%", height = "30%",align = "center")),
+                                      img(src="data.png", width = "100%", height = "30%",align = "center")),
                                br(),
                                column(12,
                                       h1(strong("About the team"),align = "center"),
