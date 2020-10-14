@@ -1,0 +1,12 @@
+name: covid19Unemployment
+title: covid19Unemployment
+username:
+account: citina
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3016877
+bundleId: 3741722
+url: https://citina.shinyapps.io/covid19Unemployment/
+when: 1602708706.54688
+asMultiple: FALSE
+asStatic: FALSE
