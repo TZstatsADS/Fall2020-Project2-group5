@@ -17,6 +17,7 @@ Term: Fall 2020
 	+ Henan Xu
 
 + **Project summary**: 
+
 In this project, we developed a user-friendly dashboard with the Shiny app to help people better understand the current situation about the pandemic and the unemployment rate in different states in the US. Users of this dashboard can discern the differences between unemployment statistics in different states. At the same time, they can also use the COVID statistics to gauge the severity of the pandemic in those respective states.
 
 As the interactive map changes with time, we can build up insights into the Covid-19 pandemic dynamics in the United States. Handy observations, such as which states suffered most during the initial outbreak of the pandemic, implemented effective procedures to contain the disease's spread and which did not, which stated had and grew considerable testing hospitalization capacity. All this information could be of great help to the government, organizations, and companies. 
