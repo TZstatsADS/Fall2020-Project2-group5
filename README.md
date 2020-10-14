@@ -5,7 +5,7 @@
 ![screenshot](doc/figs/map.jpg)
 
 
-## Project Title Covid-19 in the U.S.
+## Covid-19 in the U.S.
 Term: Fall 2020
 
 + **Projec title**:
