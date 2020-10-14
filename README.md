@@ -26,7 +26,7 @@ As the interactive map changes with time, we can build up insights into the Covi
 
 + [**Contribution statement**:](doc/a_note_on_contributions.md)
 
-Citina Liang carried out data-preprocessing for both covid19 data and unemployment data, designed the layout of the app, designed and developed an informative Home page with text and graphs, designed and built the Search page with interactive comparable plots, improved the About page, wrote the project summary and readme page.
+Citina Liang coded in R to extract most updated data automatically, carried out data-preprocessing for both covid19 data, population data, and unemployment data, designed the layout of the app, designed and developed an informative Home page with text and graphs, designed and built the Search page with comparable interactive plots, improved the About page, wrote the project summary and readme page, published the Shiny app.
 
 Henan Xu participated in group discussions throughout the process, brainstormed ideas about the contents and layout of the project, helped in debugging the app, and was responsible for designing and coding up the interactive map.
 
