@@ -38,8 +38,8 @@ dashboardPage(
                             solidHeader = TRUE,
                             h4(hr()),
                             h3("At the beginning of the pandemic, the unemployment rise as high as 14% in April.", align = "left"),
-                            h3("There was a severe negative impact on employment, especially those that are 
-                               in the service industries like restaurants, and entertainment.", align = "left")
+                            h3("There was a severe negative impact on employment, especially those in the service industries like 
+                               restaurants and entertainment.", align = "left")
                             )
                         ),
                     box(width=12,
@@ -49,10 +49,8 @@ dashboardPage(
                             h2(strong("New opportunities"), align = "center"),
                             solidHeader = TRUE,
                             h4(hr()),
-                            h3("During the same time, COVID gave rise to opportunities in other areas 
-                               like online gaming, live streaming, and online conference providers.", align = "left"),
-                            h3("Zoom's stock price had doubled during the pandemic. 
-                               Amazon also experienced doubled e-commerce sales in May.", align = "left")
+                            h3("During the same time, COVID gave rise to opportunities in other areas like online gaming, live streaming, and online conference providers. ", align = "left"),
+                            h3("Zoom's stock price had doubled during the pandemic. Amazon also experienced doubled e-commerce sales in May.", align = "left")
                         )
                         ),
                     box(width=12,
@@ -62,9 +60,9 @@ dashboardPage(
                             h2(strong("Finding a job under Covid"), align = "center"),
                             solidHeader = TRUE,
                             h4(hr()),
-                            h3("Users of this dashboard can discern the differences betweeen unemployement statistics in different states.", align = "left"),
-                            h3("At the same time, they can also make use of the COVID statistics to gauge the level of severity of the pandemic
-                               in those respective states.", align='left')
+                            h3("Users of this dashboard can discern the differences between unemployment statistics in different states.", align = "left"),
+                            h3("At the same time, they can also use the COVID statistics to gauge the severity 
+                               of the pandemic in those respective states.", align='left')
                         )
                         ),
 
