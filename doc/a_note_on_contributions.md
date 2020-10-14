@@ -1,8 +1,8 @@
-Project Finding a job under COVID-19 in the US
+**Project: Finding a job under COVID-19 in the US**
 
-Team members: Citina Liang, Henan Xu, Xiangning Han
+**Team members**: Citina Liang, Henan Xu, Xiangning Han
 
-Summary: In this project, we developed a user friendly dashboard with Shiny app to help people better understand the current situation about the pandemic and the unemployment rate in different states in the US.
+**Summary**: In this project, we developed a user friendly dashboard with Shiny app to help people better understand the current situation about the pandemic and the unemployment rate in different states in the US.
 
 [Contribution Statement] 
 
