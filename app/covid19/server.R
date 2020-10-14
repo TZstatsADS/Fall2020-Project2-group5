@@ -166,8 +166,9 @@ shinyServer(function(input, output, session) {
     })
     
     #subtab summary
+    corona_no_na<-na.omit(corona)
     output$confirmed<-renderPlot({
-      ggplot(corona,aes(x =Last_Update, y= Confirmed, fill = Confirmed)) +
+      ggplot(corona_no_na,aes(x =Last_Update, y= Confirmed, fill = Confirmed)) +
         geom_bar(stat = "identity") +
         scale_fill_viridis(option = "D") +
         labs(fill = "Confirmed", x = "", y = "") +
@@ -175,7 +176,7 @@ shinyServer(function(input, output, session) {
         theme(legend.title = element_text(face = "bold"))
     })
     output$recover_plt<-renderPlot({
-      corona %>%
+      corona_no_na %>%
         ggplot(aes(x = Last_Update, y= Deaths, fill = Deaths)) +
         geom_bar(stat = "identity") +
         scale_fill_viridis(option = "C") +
@@ -184,7 +185,7 @@ shinyServer(function(input, output, session) {
         theme(legend.title = element_text(face = "bold"))
     })
     output$deaths_plt<-renderPlot({
-      corona %>%
+      corona_no_na %>%
         ggplot(aes(x = Last_Update, y= Recovered, fill = Recovered)) +
         geom_bar(stat = "identity") +
         scale_fill_viridis(option = "A") +
@@ -193,7 +194,7 @@ shinyServer(function(input, output, session) {
         theme(legend.title = element_text(face = "bold"))
     })
     output$Hospitalization_rate<-renderPlot({
-      corona %>%
+      corona_no_na %>%
         ggplot(aes(x = Last_Update, y= Hospitalization_Rate, fill = Hospitalization_Rate)) +
         geom_bar(stat = "identity") +
         scale_fill_viridis(option = "A") +
