@@ -232,7 +232,7 @@ df_plt <-
 
 
 ####xiangning Han begin======================================
-corona<-df_clean %>% select(-Population)
+corona<-df_clean
 #First Total cases by date
 cases_total_date<-
   corona%>%
