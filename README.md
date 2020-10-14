@@ -8,7 +8,7 @@
 ## Covid-19 in the U.S.
 Term: Fall 2020
 
-+ **Projec title**:
++ **Projec title**: Covid-19 in the U.S.
 + [Shiny Link](XXX)
 + Team #5 
 + Team members:
