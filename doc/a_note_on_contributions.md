@@ -1,20 +1,13 @@
-### A Note on Contributions
+**Project: Finding a job under COVID-19 in the US**
 
-Whenever we have team projects, there are always concerns on unequal contributions from members of a project team. In the ideal world, we are all here to put in our best efforts and learn together. Even in that ideal world, we have different skill sets and preparations, and we will still contribute differently to a project. 
+**Team members**: Citina Liang, Henan Xu, Xiangning Han
 
-Therefore, you are required to post a *contribution statement* in the root README.md of your GitHub repo. Please beware that your GitHub repo will become public and remain public after the due date of the projects. 
+**Summary**: In this project, we developed a user friendly dashboard with Shiny app to help people better understand the current situation about the pandemic and the unemployment rate in different states in the US.
 
-Post your title, team members, project abstract and a contribution statement in the README.md file.  This is a common practice for research scientific journals. 
+[Contribution Statement] 
 
-Below is an example. If no contribution statement is provided, we will insert a default statement that goes "**All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement**. "
+Citina Liang coded in R to extract most updated data automatically, carried out data-preprocessing for both covid19 data, population data, and unemployment data, designed the layout of the app, designed and developed an informative Home page with text and graphs, designed and built the Search page with comparable interactive plots, improved the About page, wrote the project summary and readme page, published the Shiny app.
 
----
-Sample project README statement.
+Henan Xu participated in group discussions throughout the process, brainstormed ideas about the contents and layout of the project, helped in debugging the app, and was responsible for designing and coding up the interactive map.
 
-Project xxx
-
-Team members: Avi Bond, Comma Deed, En Funn, Gem Hon
-
-Summary: In this project, we developed a new method and improved the classification accuracy for images of cats and dogs to 99.9%
-
-[Contribution Statement] AB, CD, EF and GH designed the study. AB and CD developed baseline classification model for evaluation. EF and GH explored feature engineering for improving the baseline model. AB, EF and GH discussed and designed the model evaluation protocol. CD carried out the computation for model evaluation. All team members contributed to the GitHub repository and prepared the presentation. All team members approve our work presented in our GitHub repository including this contribution statement.
+Xiangning Han analyzed and extracted data from the original dataset. Designed the Home Page, Statistical analysis Page and About Page of the shiny app.
