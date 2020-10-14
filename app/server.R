@@ -6,148 +6,299 @@
 #
 #    http://shiny.rstudio.com/
 #
-#-------------------------------------------------App Server----------------------------------
-library(viridis)
-library(dplyr)
-library(tibble)
-library(tidyverse)
-library(shinythemes)
-library(sf)
-library(RCurl)
-library(tmap)
-library(rgdal)
-library(leaflet)
-library(shiny)
-library(shinythemes)
-library(plotly)
-library(ggplot2)
-#can run RData directly to get the necessary date for the app
-#global.r will enable us to get new data everyday
-#update data with automated script
-source("global.R") 
-#load('./output/covid-19.RData')
-shinyServer(function(input, output) {
-#----------------------------------------
-#tab panel 1 - Home Plots
-#preapare data for plot
-output$case_overtime <- renderPlotly({
-    #determin the row index for subset
-    req(input$log_scale)
-    end_date_index <- which(date_choices == input$date)
-    #if log scale is not enabled, we will just use cases
-    if (input$log_scale == FALSE) {
-        #render plotly figure
-        case_fig <- plot_ly()
-        #add comfirmed case lines
-        case_fig <- case_fig %>% add_lines(x = ~date_choices[1:end_date_index], 
-                             y = ~as.numeric(aggre_cases[input$country,])[1:end_date_index],
-                             line = list(color = 'rgba(67,67,67,1)', width = 2),
-                             name = 'Confirmed Cases')
-        #add death line 
-        case_fig <- case_fig %>% add_lines(x = ~date_choices[1:end_date_index],
-                               y = ~as.numeric(aggre_death[input$country,])[1:end_date_index],
-                               name = 'Death Toll')
-        #set the axis for the plot
-        case_fig <- case_fig %>% 
-            layout(title = paste0(input$country,'\t','Trend'),
-                   xaxis = list(title = 'Date',showgrid = FALSE), 
-                   yaxis = list(title = 'Comfirmed Cases/Deaths',showgrid=FALSE)
-                   )
-        }
-    #if enable log scale, we need to take log of the y values
-    else{
-        #render plotly figure
-        case_fig <- plot_ly()
-        #add comfirmed case lines
-        case_fig <- case_fig %>% add_lines(x = ~date_choices[1:end_date_index], 
-                                           y = ~log(as.numeric(aggre_cases[input$country,])[1:end_date_index]),
-                                           line = list(color = 'rgba(67,67,67,1)', width = 2),
-                                           name = 'Confirmed Cases')
-        #add death line 
-        case_fig <- case_fig %>% add_lines(x = ~date_choices[1:end_date_index],
-                                           y = ~log(as.numeric(aggre_death[input$country,])[1:end_date_index]),
-                                           name = 'Death Toll')
-        #set the axis for the plot
-        case_fig <- case_fig %>% 
-            layout(title = paste0(input$country,'<br>','\t','Trends'),
-                   xaxis = list(title = 'Date',showgrid = FALSE), 
-                   yaxis = list(title = 'Comfirmed Cases/Deaths(Log Scale)',showgrid=FALSE)
-            )
-    }
-    return(case_fig)
-        })
-#----------------------------------------
-#tab panel 2 - Maps
-data_countries <- reactive({
-    if(!is.null(input$choices)){
-        if(input$choices == "Cases"){
-            return(aggre_cases_copy)
-            
-        }else{
-            return(aggre_death_copy)
-        }}
-})
+#source("global.R")
 
-#get the largest number of count for better color assignment
-maxTotal<- reactive(max(data_countries()%>%select_if(is.numeric), na.rm = T))    
-#color palette
-pal <- reactive(colorNumeric(c("#FFFFFFFF" ,rev(inferno(256))), domain = c(0,log(binning(maxTotal())))))    
+
+# Define server logic required to draw a histogram
+shinyServer(function(input, output, session) {
+  
+  #-------------------tab1 Home
+  output$total_case <- renderValueBox({
+    corona%>%
+      summarise(total_case=sum(Confirmed))%>%
+      .$total_case%>%
+      format(big.mark = ',') %>%
+      valueBox(subtitle = "Total Case Confirmed",
+               icon = icon("disease"),
+               color = "orange")
+  })
+
+  output$total_recovered <- renderValueBox({
+    corona %>%
+      summarise(total_recovered = sum(Recovered))%>%
+      .$total_recovered %>%
+      format(big.mark = ',') %>%
+      valueBox(subtitle = "Total Recovered Case",
+               icon = icon("smile-wink"),
+               color = "green")
+  })
+
+  output$total_death <- renderValueBox({
+    corona %>%
+      summarise(total_death = sum(Deaths))%>%
+      .$total_death %>%
+      format(big.mark = ',') %>%
+      valueBox(subtitle = "Total Dead Case",
+               icon = icon("user-alt-slash"),
+               color = "red")
+  })
+  
+  
+  #-------------------tab2 Map
+  date_data = reactive({
+    data %>% filter(Last_Update == input$DateInput)
+  })
+  
+  Indicator_data = reactive({
+    date_data() %>% 
+      select(Province_State, Last_Update, Value = input$IndicatortInput) %>%
+      mutate(Province_State = tolower(Province_State))
+  })
+  
+  output$drawmap <- renderLeaflet(draw_map(Indicator_data(), input$IndicatortInput))
+  
+  
+  #-------------------tab3 Search Panel
+  # unemployment rate
+  df_plt1 <- reactive({
+    tmp_un <- 
+      df_un_plt %>% 
+      filter(State == input$state1 | 
+            State == input$state2 | 
+            State == 'Average') %>% 
+      filter(date > as.Date('2018-03-01'))
+  })
+  
+  output$unem_plt <- renderPlotly({
+    ggplot(df_plt1())+
+      geom_line(aes(date, Unemployment_Rate, col=State))+
+      labs(title = 'Unemployment Rate Over Time',
+           x='',
+           y='',
+           col='States')+
+      theme_minimal()
+  })
+  
+  # switch freq and %
+  prect_or_freq <- reactive({
+    input$prect
+  })
+  
+  df_plt2 <- reactive({
+    tmp <- 
+      df_plt %>% 
+      filter(Province_State == input$state1 | 
+               Province_State == input$state2 | 
+               Province_State == 'Average')
+    if(prect_or_freq()){
+      tmp$y_d <- tmp$prect_deaths
+      tmp$y_a <- tmp$prect_active
+      tmp$y_c <- tmp$prect_confirmed
+      tmp$y_r <- tmp$prect_recovered
+    }else{
+      tmp$y_d = tmp$total_deaths
+      tmp$y_a = tmp$total_active
+      tmp$y_c = tmp$total_confirmed
+      tmp$y_r = tmp$total_recovered
+    }
+    tmp
+  })
+  
+  # deaths
+  output$death_plt <- renderPlotly({
+    ggplot(df_plt2())+
+      geom_line(aes(Last_Update, y_d, col=Province_State))+
+      labs(title = 'Deaths Cases Over Time',
+           x='',
+           y='',
+           col='States')+
+      theme_minimal()
+  })
+  
+  # active
+  output$active_plt <- renderPlotly({
+    ggplot(df_plt2())+
+      geom_line(mapping = aes(Last_Update, y_a, col=Province_State))+
+      labs(title = 'Active Cases Over Time',
+           x='',
+           y='',
+           col='States')+
+      theme_minimal()
+  })
+  
+  # confirmed
+  output$confirmed_plt <- renderPlotly({
+    ggplot(df_plt2())+
+      geom_line(mapping = aes(Last_Update, y_c, col=Province_State))+
+      labs(title = 'Confirmed Cases Over Time',
+           x='',
+           y='',
+           col='States')+
+      theme_minimal()
+  })
+  
+  # recovered
+  output$recovered_plt <- renderPlotly({
+    ggplot(df_plt2())+
+      geom_line(mapping = aes(Last_Update, y_r, col=Province_State))+
+      labs(title = 'Recovered Cases Over Time',
+           x='',
+           y='',
+           col='States')+
+      theme_minimal()
+  })
+  
+  # incident rate
+  output$incidentrate_plt <- renderPlotly({
+    ggplot(df_plt2())+
+      geom_line(mapping = aes(Last_Update, Incident_Rate, col=Province_State))+
+      labs(title = 'Incident Rate Over Time',
+           x='',
+           y='',
+           col='States')+
+      theme_minimal()
+  })
+  
+  # info boxes part
+  output$deaths_val <- renderValueBox({
+    valueBox(format(df_plt2()$total_deaths[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                    big.mark = ','),
+             'DEATHS',
+             icon = icon("skull-crossbones"), color = 'red')
+  })
+  output$confirmed_val <- renderValueBox({
+    valueBox(format(df_plt2()$total_confirmed[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                    big.mark = ','),
+             'CONFIRMED',
+             icon = icon("viruses"), color = 'orange')
+  })
+  output$active_val <- renderValueBox({
+    valueBox(format(df_plt2()$total_active[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                    big.mark = ','),
+             'ACTIVE',
+             icon = icon("head-side-mask"), color = 'yellow')
+  })
+  output$recovered_val <- renderValueBox({
+    valueBox(format(df_plt2()$total_recovered[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                    big.mark = ','),
+             'RECOVERED',
+             icon = icon("heart"), color = 'green')
+  })
+  output$peopletested_val <- renderValueBox({
+    valueBox(format(df_plt2()$People_Tested[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                    big.mark = ','),
+             'PEOPLE TESTED',
+             icon = icon("vial"), color = 'blue')
+  })
+  output$incidentrate_val <- renderValueBox({
+    valueBox(format(df_plt2()$Incident_Rate[df_plt2()$Last_Update==max(df_plt2()$Last_Update)&df_plt2()$Province_State==input$state1],
+                    big.mark = ','),
+             'INCIDENT RATE',
+             icon = icon("running"), color = 'aqua')
+  })
     
-output$map <- renderLeaflet({
-    map <-  leaflet(countries) %>%
-        addProviderTiles("Stadia.Outdoors", options = providerTileOptions(noWrap = TRUE)) %>%
-        setView(0, 30, zoom = 3) })
-
-
-observe({
-    if(!is.null(input$date_map)){
-        select_date <- format.Date(input$date_map,'%Y-%m-%d')
-    }
-    if(input$choices == "Cases"){
-        #merge the spatial dataframe and cases dataframe
-        aggre_cases_join <- merge(countries,
-                                  data_countries(),
-                                  by.x = 'NAME',
-                                  by.y = 'country_names',sort = FALSE)
-        #pop up for polygons
-        country_popup <- paste0("<strong>Country: </strong>",
-                                aggre_cases_join$NAME,
-                                "<br><strong>",
-                                "Total Cases: ",
-                                aggre_cases_join[[select_date]],
-                                "<br><strong>")
-        leafletProxy("map", data = aggre_cases_join)%>%
-            addPolygons(fillColor = pal()(log((aggre_cases_join[[select_date]])+1)),
-                        layerId = ~NAME,
-                        fillOpacity = 1,
-                        color = "#BDBDC3",
-                        weight = 1,
-                        popup = country_popup) 
-    } else {
-        #join the two dfs together
-        aggre_death_join<- merge(countries,
-                                 data_countries(),
-                                 by.x = 'NAME',
-                                 by.y = 'country_names',
-                                 sort = FALSE)
-        #pop up for polygons
-        country_popup <- paste0("<strong>Country: </strong>",
-                                aggre_death_join$NAME,
-                                "<br><strong>",
-                                "Total Deaths: ",
-                                aggre_death_join[[select_date]],
-                                "<br><strong>")
-        
-        leafletProxy("map", data = aggre_death_join)%>%
-            addPolygons(fillColor = pal()(log((aggre_death_join[[select_date]])+1)),
-                        layerId = ~NAME,
-                        fillOpacity = 1,
-                        color = "#BDBDC3",
-                        weight = 1,
-                        popup = country_popup)
-        
-        }
+    #-------------------tab5 Statistics analysis
+    #subtab calendar
+    output$cases_cald<-renderPlot({
+      plot(cases_calendar)
     })
-
-
+    output$recovered_cald<-renderPlot({
+      plot(recovered_calendar)
+    })
+    output$death_cald<-renderPlot({
+      plot(death_calendar)
+    })
+    output$newcase_cald<-renderPlot({
+      plot(new_cases_calendar)
+    })
+    
+    #subtab summary
+    corona_no_na<-na.omit(corona)
+    output$confirmed<-renderPlot({
+      ggplot(corona_no_na,aes(x =Last_Update, y= Confirmed, fill = Confirmed)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "D") +
+        labs(fill = "Confirmed", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    output$recover_plt<-renderPlot({
+      corona_no_na %>%
+        ggplot(aes(x = Last_Update, y= Deaths, fill = Deaths)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "C") +
+        labs(fill = "Deaths", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    output$deaths_plt<-renderPlot({
+      corona_no_na %>%
+        ggplot(aes(x = Last_Update, y= Recovered, fill = Recovered)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "A") +
+        labs(fill = "Recovered", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    output$Hospitalization_rate<-renderPlot({
+      corona_no_na %>%
+        ggplot(aes(x = Last_Update, y= Hospitalization_Rate, fill = Hospitalization_Rate)) +
+        geom_bar(stat = "identity") +
+        scale_fill_viridis(option = "A") +
+        labs(fill = "Hospitalization_Rate", x = "", y = "") +
+        theme_dark() +
+        theme(legend.title = element_text(face = "bold"))
+    })
+    #subtab ranking
+    top_10_confirmed <- corona %>%
+      select(Last_Update,Province_State, Confirmed) %>%
+      group_by(Province_State)%>%
+      summarise(Confirmed=sum(Confirmed))%>%
+      arrange(desc(Confirmed))
+    output$top_10_confirmed<-renderPlotly({top_10_confirmed[1:10,] %>%
+        ggplot(aes(x = reorder(`Province_State`,Confirmed), y = Confirmed )) +
+        geom_bar(stat = "identity", fill  = "red", width = 0.8) +
+        theme_economist() +
+        scale_y_continuous(breaks = seq(0, 55000000, by = 5000000), labels = comma) +
+        coord_flip() +
+        labs(x = "", y = "", title = "Top 10 (the Most Confirmed Cases)") +
+        theme(axis.text.x = element_text(angle = 60)) +
+        theme(axis.title = element_text(size = 14, colour = "black"),
+              axis.text.y = element_text(size = 11, face = "bold"))})
+    
+    top_10_recover <- corona %>%
+      select(Last_Update,Province_State, Recovered) %>%
+      group_by(Province_State)%>%
+      summarise(Recovered=sum(Recovered))%>%
+      arrange(desc(Recovered))
+    output$top_10_recovered<-renderPlotly({
+      top_10_recover[1:10,] %>%
+        ggplot(aes(x = reorder(`Province_State`,Recovered), y = Recovered )) +
+        geom_bar(stat = "identity", fill  = "red", width = 0.8) +
+        theme_economist() +
+        scale_y_continuous(breaks = seq(0, 55000000, by = 5000000), labels = comma) +
+        coord_flip() +
+        labs(x = "", y = "", title = "Top 10 (the Most Recovered Cases)") +
+        theme(axis.text.x = element_text(angle = 60)) +
+        theme(axis.title = element_text(size = 14, colour = "black"),
+              axis.text.y = element_text(size = 11, face = "bold"))})
+    
+    top_10_death <- corona %>%
+      select(Last_Update,Province_State, Deaths) %>%
+      group_by(Province_State)%>%
+      summarise(Deaths=sum(Deaths))%>%
+      arrange(desc(Deaths))
+    output$top_10_deaths<-renderPlotly({
+      top_10_death[1:10,] %>%
+        ggplot(aes(x = reorder(`Province_State`,Deaths), y = Deaths )) +
+        geom_bar(stat = "identity", fill  = "red", width = 0.8) +
+        theme_economist() +
+        scale_y_continuous(breaks = seq(0, 5500000, by = 500000), labels = comma) +
+        coord_flip() +
+        labs(x = "", y = "", title = "Top 10 (the Most Deaths Cases)") +
+        theme(axis.text.x = element_text(angle = 60)) +
+        theme(axis.title = element_text(size = 14, colour = "black"),
+              axis.text.y = element_text(size = 11, face = "bold"))})
+    
+    
 })
