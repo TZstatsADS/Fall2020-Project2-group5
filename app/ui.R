@@ -106,10 +106,6 @@ dashboardPage(
                     valueBoxOutput('incidentrate_val')
                 ),
                 # plots
-                fluidRow(
-                    plotlyOutput('unem_plt')
-                ),
-                br(),
                 mainPanel(
                     width = '100%',
                     tabsetPanel(type = 'tabs',
@@ -119,6 +115,10 @@ dashboardPage(
                                 tabPanel('Recovered', plotlyOutput('recovered_plt')),
                                 tabPanel('Incident Rate', plotlyOutput('incidentrate_plt'))
                     )
+                ),
+                br(),
+                fluidRow(
+                    plotlyOutput('unem_plt')
                 )
                 
         ),

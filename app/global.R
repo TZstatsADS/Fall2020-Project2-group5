@@ -60,7 +60,7 @@ library(ggdark)
 #     df <- read.csv(text = getURL(paste0(urlpart1, month(start), "-", day(start), "-", year(start), ".csv")))
 #   }
 # }
-#   
+# 
 # for (i in (start+1):(Sys.Date()-1)) {
 #   t <- as.Date(i)
 #   if(month(t)<10){
@@ -79,33 +79,33 @@ library(ggdark)
 #   df <- rbind(df, temp)
 # }
 # 
-# df_clean <- df %>% 
-#   mutate(Last_Update = as.Date(Last_Update)) %>% 
-#   filter(ISO3 == 'USA') %>% 
-#   filter(FIPS < 100) %>% 
-#   droplevels() %>% 
+# df_clean <- df %>%
+#   mutate(Last_Update = as.Date(Last_Update)) %>%
+#   filter(ISO3 == 'USA') %>%
+#   filter(FIPS < 100) %>%
+#   droplevels() %>%
 #   mutate(Recovered=ifelse(is.na(Recovered), 0, Recovered))
 # 
 # tmpc <- which(df_clean$Active<0)
 # df_clean$Active[tmpc] <- round(mean(c(df_clean$Active[tmpc-1], df_clean$Active[tmpc+1])),0)
-
-# adding population variable:
+# 
+# #adding population variable:
 # df_add <- read.csv(text = getURL("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv"))
-# df_clean <- 
-#   df_add %>% 
-#   select(FIPS, Population) %>% 
+# df_clean <-
+#   df_add %>%
+#   select(FIPS, Population) %>%
 #   merge(df_clean, by='FIPS')
+# 
+# save(df_clean, file="www/data_up_to_date.RData")
+#there are 50 states and District of Columbia
 
-# save(df_clean, file="output/data_up_to_date.RData")
-# there are 50 states and District of Columbia
+#if the data source is not available, will use the data stored (up to 10-11-2020)
+#name: "data_up_to_date.Rdata"
 
-# if the data source is not available, will use the data stored (up to 10-11-2020)
-# name: "data_up_to_date.Rdata"
-load(file = "output/data_up_to_date.RData")
+load(file = "www/data_up_to_date.RData")
 cbPalette <- c("#56B4E9", "#D55E00", "#009E73", "#F0E442", "#E69F00", "#0072B2", "#CC79A7", "#F0E449")
 
 #--------map
-load("output/data_up_to_date.RData")
 data = df_clean %>% select("Province_State","Country_Region", "Last_Update", "Lat", "Long_", "Confirmed","Deaths", "Recovered", "Active", "FIPS", "Incident_Rate", "People_Tested", "People_Hospitalized", "Mortality_Rate", "UID", "ISO3","Testing_Rate", "Hospitalization_Rate" )
 data[1692, ]$Last_Update = "2020-04-13"
 
@@ -177,20 +177,6 @@ draw_map = function(df, indicator){
 # names(df_un)[-1] <- sub('X','',names(df_un)[-1])
 # save(df_un, file="www/unemployment_rate_by_state.RData")
 load(file = 'www/unemployment_rate_by_state.RData')
-df_un_c <- 
-  df_un %>% 
-  gather(key = 'date', value = 'Unemployment_Rate', 2:ncol(df_un)) %>% 
-  filter(State %in% unique(df_plt$Province_State)) %>% 
-  mutate(date = as.Date(parse_date_time(date, orders = 'mdy')))
-
-df_un_plt <- 
-  df_un_c %>% 
-  group_by(date) %>% 
-  summarise(Unemployment_Rate=floor(mean(Unemployment_Rate))) %>% 
-  mutate(State='Average') %>% 
-  select(State, date, Unemployment_Rate) %>% 
-  rbind(df_un_c)
-
 
 df_avg <- 
   df_clean %>% 
@@ -230,6 +216,19 @@ df_plt <-
   as.data.frame() %>%
   rbind(df_avg)
 
+df_un_c <- 
+  df_un %>% 
+  gather(key = 'date', value = 'Unemployment_Rate', 2:ncol(df_un)) %>% 
+  filter(State %in% unique(df_plt$Province_State)) %>% 
+  mutate(date = as.Date(parse_date_time(date, orders = 'mdy')))
+
+df_un_plt <- 
+  df_un_c %>% 
+  group_by(date) %>% 
+  summarise(Unemployment_Rate=floor(mean(Unemployment_Rate))) %>% 
+  mutate(State='Average') %>% 
+  select(State, date, Unemployment_Rate) %>% 
+  rbind(df_un_c)
 
 ####xiangning Han begin======================================
 corona<-df_clean %>% select(-Population)
