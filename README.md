@@ -5,7 +5,7 @@
 ![screenshot](doc/figs/map.jpg)
 
 
-## Project Title Lorem ipsum dolor sit amet
+## Project Title Covid-19 in the U.S.
 Term: Fall 2020
 
 + **Projec title**:
@@ -16,7 +16,7 @@ Term: Fall 2020
 	+ Xiangning Han
 	+ Henan Xu
 
-+ **Project summary**: 
++ **Project summary**: As the interactive map changes with time, we can build up insights into the dynamics of the Covid-19 pandemic in the United states. Handy oberservations, such as which states suffered most during the initial outbreak of the pandemic, which states implemented effective procedures to contain the spread of the diease and which did not, which states had and grew considerable testing and hopitalization capacity. All these information could be of great help to the government, organizations and companies. 
 
 + **Data Source**: [JHU CSSE Covid-19 Data](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data) 
 
