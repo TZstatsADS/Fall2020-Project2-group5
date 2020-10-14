@@ -111,10 +111,11 @@ cbPalette <- c("#56B4E9", "#D55E00", "#009E73", "#F0E442", "#E69F00", "#0072B2",
 #--------map
 load("output/data_up_to_date.RData")
 data = df_clean %>% select("Province_State","Country_Region", "Last_Update", "Lat", "Long_", "Confirmed","Deaths", "Recovered", "Active", "FIPS", "Incident_Rate", "People_Tested", "People_Hospitalized", "Mortality_Rate", "UID", "ISO3","Testing_Rate", "Hospitalization_Rate" )
+data[1692, ]$Last_Update = "2020-04-13"
 
 date = data$Last_Update %>% unique()
-mindate = date[1]
-maxdate = date[length(date)]
+mindate = min(date)
+maxdate = max(date)
 Indicators = colnames(data)[c(6:9,11:14,17,18)]
 
 data = data %>% 
