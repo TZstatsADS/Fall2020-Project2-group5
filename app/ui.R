@@ -34,7 +34,7 @@ dashboardPage(
                         img(src="../home1.jpg",width = '50%', height = "50%", align='left'),
                         box(width=6,
                             align='center',
-                            h2(strong("Coping with effectes of unemployment"), align = "center"),
+                            h2(strong("Coping with effects of unemployment"), align = "center"),
                             solidHeader = TRUE,
                             h4(hr()),
                             h3("At the beginning of the pandemic, the unemployment rise as high as 14% in April.", align = "left"),
