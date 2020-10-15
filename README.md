@@ -22,7 +22,7 @@ In this project, we developed a user-friendly dashboard with the Shiny app to he
 
 As the interactive map changes with time, we can build up insights into the Covid-19 pandemic dynamics in the United States. Handy observations, such as which states suffered most during the initial outbreak of the pandemic, implemented effective procedures to contain the disease's spread and which did not, which stated had and grew considerable testing hospitalization capacity. All this information could be of great help to the government, organizations, and companies. 
 
-+ **Data Source**: [JHU CSSE Covid-19 Data](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data) 
++ **Data Source**: [JHU CSSE Covid-19 Data](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data), [U.S. Bureau of Labor Statistics](https://www.bls.gov/web/laus/lauhsthl.htm)
 
 + [**Contribution statement**:](doc/a_note_on_contributions.md)
 
