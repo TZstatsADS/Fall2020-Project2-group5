@@ -13,8 +13,16 @@
 shinyServer(function(input, output, session) {
   
   #-------------------tab1 Home
+  corona_lastest<-df_clean%>%
+    group_by(Province_State,Last_Update)%>%
+    summarise(Confirmed=sum(Confirmed),
+              Recovered=sum(Recovered),
+              Deaths=sum(Deaths),.groups='drop')%>%
+    mutate("New_Cases" = Confirmed - lag(Confirmed, 1))%>%
+    filter(Last_Update==max(Last_Update))
+  
   output$total_case <- renderValueBox({
-    corona%>%
+    corona_lastest%>%
       summarise(total_case=sum(Confirmed))%>%
       .$total_case%>%
       format(big.mark = ',') %>%
@@ -22,9 +30,9 @@ shinyServer(function(input, output, session) {
                icon = icon("disease"),
                color = "orange")
   })
-
+  
   output$total_recovered <- renderValueBox({
-    corona %>%
+    corona_lastest %>%
       summarise(total_recovered = sum(Recovered))%>%
       .$total_recovered %>%
       format(big.mark = ',') %>%
@@ -32,9 +40,9 @@ shinyServer(function(input, output, session) {
                icon = icon("smile-wink"),
                color = "green")
   })
-
+  
   output$total_death <- renderValueBox({
-    corona %>%
+    corona_lastest %>%
       summarise(total_death = sum(Deaths))%>%
       .$total_death %>%
       format(big.mark = ',') %>%
@@ -42,7 +50,6 @@ shinyServer(function(input, output, session) {
                icon = icon("user-alt-slash"),
                color = "red")
   })
-  
   
   #-------------------tab2 Map
   date_data = reactive({
@@ -250,7 +257,7 @@ shinyServer(function(input, output, session) {
         theme(legend.title = element_text(face = "bold"))
     })
     #subtab ranking
-    top_10_confirmed <- corona %>%
+    top_10_confirmed <- corona_lastest %>%
       select(Last_Update,Province_State, Confirmed) %>%
       group_by(Province_State)%>%
       summarise(Confirmed=sum(Confirmed))%>%
@@ -259,14 +266,14 @@ shinyServer(function(input, output, session) {
         ggplot(aes(x = reorder(`Province_State`,Confirmed), y = Confirmed )) +
         geom_bar(stat = "identity", fill  = "red", width = 0.8) +
         theme_economist() +
-        scale_y_continuous(breaks = seq(0, 55000000, by = 5000000), labels = comma) +
+        scale_y_continuous(breaks = seq(0, 5000000, by = 500000), labels = comma) +
         coord_flip() +
         labs(x = "", y = "", title = "Top 10 (the Most Confirmed Cases)") +
         theme(axis.text.x = element_text(angle = 60)) +
         theme(axis.title = element_text(size = 14, colour = "black"),
               axis.text.y = element_text(size = 11, face = "bold"))})
     
-    top_10_recover <- corona %>%
+    top_10_recover <- corona_lastest %>%
       select(Last_Update,Province_State, Recovered) %>%
       group_by(Province_State)%>%
       summarise(Recovered=sum(Recovered))%>%
@@ -276,14 +283,14 @@ shinyServer(function(input, output, session) {
         ggplot(aes(x = reorder(`Province_State`,Recovered), y = Recovered )) +
         geom_bar(stat = "identity", fill  = "red", width = 0.8) +
         theme_economist() +
-        scale_y_continuous(breaks = seq(0, 55000000, by = 5000000), labels = comma) +
+        scale_y_continuous(breaks = seq(0, 5000000, by = 100000), labels = comma) +
         coord_flip() +
         labs(x = "", y = "", title = "Top 10 (the Most Recovered Cases)") +
         theme(axis.text.x = element_text(angle = 60)) +
         theme(axis.title = element_text(size = 14, colour = "black"),
               axis.text.y = element_text(size = 11, face = "bold"))})
     
-    top_10_death <- corona %>%
+    top_10_death <- corona_lastest %>%
       select(Last_Update,Province_State, Deaths) %>%
       group_by(Province_State)%>%
       summarise(Deaths=sum(Deaths))%>%
@@ -293,7 +300,7 @@ shinyServer(function(input, output, session) {
         ggplot(aes(x = reorder(`Province_State`,Deaths), y = Deaths )) +
         geom_bar(stat = "identity", fill  = "red", width = 0.8) +
         theme_economist() +
-        scale_y_continuous(breaks = seq(0, 5500000, by = 500000), labels = comma) +
+        scale_y_continuous(breaks = seq(0, 500000, by = 50000), labels = comma) +
         coord_flip() +
         labs(x = "", y = "", title = "Top 10 (the Most Deaths Cases)") +
         theme(axis.text.x = element_text(angle = 60)) +

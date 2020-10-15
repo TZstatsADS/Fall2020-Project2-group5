@@ -9,7 +9,7 @@
 Term: Fall 2020
 
 + **Projec title: Finding a job under COVID-19 in the US**
-+ [Shiny Link](XXX)
++ [Shiny Link](https://citina.shinyapps.io/covid19Unemployment/)
 + Team #5 
 + Team members:
 	+ Citina Liang (Presenter)
